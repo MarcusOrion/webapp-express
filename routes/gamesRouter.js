@@ -22,4 +22,9 @@ router.patch("/:id", (req,res) => {
     const id = Number(req.params.id)
     res.send(`Aggiornamento della card videogioco con ID: ${id}`)
 })
+// DESTROY - Eliminazione di un elemento specifico (DELETE)
+router.delete("/:id", (req,res) => {
+    const id = Number(req.params.id)
+    res.send(`Eliminazione della card videogioco con id: ${id}`)
+})
 export default router;
