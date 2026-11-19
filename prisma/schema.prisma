@@ -19,4 +19,13 @@ model Videogame {
   rating Decimal @db.Decimal(3,1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  category Category  @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}
+model Category {
+  id Int @id @default(autoincrement())
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  videogames Videogame[]
 }
