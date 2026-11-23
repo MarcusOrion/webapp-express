@@ -8,19 +8,43 @@ const sendError = (res, status , message) =>
     })
 // INDEX - Lista dei giochi (READ)
 router.get("/", async (req,res) => {
+    const limit = req.query.limit
     const videogames = await Prisma.videogame.findMany({
     select: {
         id: true,
         title: true,
         rating: true,
-            }
+            },
+    take: limit ? Number(limit): undefined
     });
     res.json(videogames);
 })
 // SHOW - Dettaglio di un videogioco specifico (READ)
-router.get("/:id", (req,res) => {
+router.get("/:id", async (req,res) => {
     const id = Number(req.params.id)
-    res.send(`Dettaglio della card videogioco con ID: ${id}`)
+    // Validazione formato numerico intero
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({
+            error: 'Invalid id'
+        })
+    }
+    const videogame = await prisma.videogame.findUnique({
+        where: {
+            id: true,
+        },
+        category: {
+            select: {
+                id: true,
+                name: true,
+            }
+        }
+    })
+    if(!videogame) {
+        return res.status(404).json({
+            error: 'Videogame not found'
+        })
+    }
+    res.json(videogame)
 })
 // STORE - Creazione di un nuovo elemento (CREATE) 
 router.post("/", (req,res) => {
