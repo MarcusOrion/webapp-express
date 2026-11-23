@@ -78,8 +78,24 @@ router.patch("/:id", (req,res) => {
     res.send(`Aggiornamento della card videogioco con ID: ${id}`)
 })
 // DESTROY - Eliminazione di un elemento specifico (DELETE)
-router.delete("/:id", (req,res) => {
+router.delete("/:id", async (req,res) => {
     const id = Number(req.params.id)
-    res.send(`Eliminazione della card videogioco con id: ${id}`)
+    if (!Number.isInteger(id)) {
+        return sendError(res, 400, 'Invalid videogame id')
+    }
+    const videogame = await prisma.videogame.findUnique({
+        where: {
+            id
+        }
+    })
+    if (!videogame) {
+        return sendError (sendError, 404, 'Videogame not found')
+    }
+    await prisma.videogame.delete({
+        where: {
+            id: id
+        }
+    })
+    res.sendStatus(204)
 })
 export default router;
