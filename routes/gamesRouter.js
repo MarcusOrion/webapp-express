@@ -73,9 +73,21 @@ router.post("/", async (req,res) => {
     res.status(201).json(newVideogame)
 })
 // UPDATE - Modifica di un elemento già esistente (UPDATE)
-router.patch("/:id", (req,res) => {
+router.patch("/:id", async (req,res) => {
     const id = Number(req.params.id)
-    res.send(`Aggiornamento della card videogioco con ID: ${id}`)
+    const {title, description, rating, categoryId} = req.body;
+    const updateVideogame = await prisma.videogame.update({
+        where: {
+            id: id,
+        },
+        data: {
+            title,
+            description,
+            rating,
+            categoryId
+        }
+    })
+    res.json(updateVideogame)
 })
 // DESTROY - Eliminazione di un elemento specifico (DELETE)
 router.delete("/:id", async (req,res) => {
