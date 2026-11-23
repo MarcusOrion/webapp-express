@@ -7,8 +7,15 @@ const sendError = (res, status , message) =>
         error: message
     })
 // INDEX - Lista dei giochi (READ)
-router.get("/", (req,res) => {
-    res.send('Lista dei videogiochi')
+router.get("/", async (req,res) => {
+    const videogames = await Prisma.videogame.findMany({
+    select: {
+        id: true,
+        title: true,
+        rating: true,
+            }
+    });
+    res.json(videogames);
 })
 // SHOW - Dettaglio di un videogioco specifico (READ)
 router.get("/:id", (req,res) => {
