@@ -12,9 +12,9 @@ app.get('/', (req, res) => {
     res.send('Blog homepage')
 })
 app.use('/videogames', gamesRouter)
-// Middleware 404
-app.use(notFound)
 // Middleware 500
 app.use(errorHandler)
+// Middleware 404
+app.use(notFound)
 // Server start
 app.listen (port, () => console.log('Server started at http://loclahost/' + port))

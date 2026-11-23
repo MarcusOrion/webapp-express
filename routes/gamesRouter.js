@@ -1,7 +1,11 @@
 import express from 'express'
 
 const router = express.Router()
-
+// Utilities - Permette di centralizzare lo stato di res, status e messaggio di errore nelle CRUD
+const sendError = (res, status , message) =>
+    res.status(status).json({
+        error: message
+    })
 // INDEX - Lista dei giochi (READ)
 router.get("/", (req,res) => {
     res.send('Lista dei videogiochi')
