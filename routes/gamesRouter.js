@@ -1,26 +1,9 @@
-import express from 'express'
+import express from 'express';
+import prisma from '../libs/prismaClient.js'
 
 const router = express.Router()
-// Utilities
-// - Permette di centralizzare lo stato di res, status e messaggio di errore nelle CRUD
-const sendError = (res, status , message) =>
-    res.status(status).json({
-        error: message
-    })
-// - Permette di impedire di inserire stringhe vuote nella ricerca del titolo
-const isStringValid = (value) => typeof value === 'string' && value.trim() != '';
 // INDEX - Lista dei giochi (READ)
 router.get("/", async (req,res) => {
-    const limit = req.query.limit
-    const videogames = await Prisma.videogame.findMany({
-    select: {
-        id: true,
-        title: true,
-        rating: true,
-            },
-    take: limit ? Number(limit): undefined
-    });
-    res.json(videogames);
 })
 // SHOW - Dettaglio di un videogioco specifico (READ)
 router.get("/:id", async (req,res) => {
