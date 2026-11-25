@@ -1,5 +1,4 @@
 import express from 'express';
-import prisma from '../libs/prismaClient.js'
 import { destroy, index, show, store, update } from '../controllers/videogamesController.js';
 
 const router = express.Router()

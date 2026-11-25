@@ -29,12 +29,15 @@ export async function show (req, res) {
     }
     const videogame = await prisma.videogame.findUnique({
         where: {
-            id: true,
+            id,
         },
-        category: {
-            select: {
-                id: true,
-                name: true,
+        include:{
+            category: true,
+            categorY: {
+                select: {
+                    id: true,
+                    name: true,
+                }
             }
         }
     })
@@ -46,8 +49,12 @@ export async function show (req, res) {
 export async function store (req, res) {
    const { title, description, rating, categoryId} = req.body;
    // Validazione campi obbligatori
-   if (isStringValid(title)) {
+   if (!isStringValid(title)) {
     return sendError(res, 400, 'Title data is required')
+   }
+   // Controllo che CategoryId sia intero
+   if (Number.isInteger(categoryId)) {
+    return sendError (res, 400, 'Category id not valid')
    }
    // Validazione id categoria
    const category = await prisma.category.findUnique({
@@ -56,7 +63,7 @@ export async function store (req, res) {
     }
     })
     if (!category) {
-        return sendError(req, 400, 'Category id not valid')
+        return sendError(res, 400, 'Category id not valid')
     }
    const newVideogame = await prisma.videogame.create({
     data: {
@@ -73,6 +80,7 @@ export async function store (req, res) {
 }
 export async function update (req, res) {
       const id = Number(req.params.id)
+      const {title, description, rating, categoryId} = req.body;
     // Validazione dei campi obbligatori
     if (!Number.isInteger(id)) {
         return sendError(res, 400, 'Invalid videogame id')
@@ -88,10 +96,9 @@ export async function update (req, res) {
             return sendError(res, 400, 'Invalid category id')
         }
     }
-    const {title, description, rating, categoryId} = req.body;
     const updateVideogame = await prisma.videogame.update({
         where: {
-            id: id,
+            id,
         },
         data: {
             title,
@@ -100,7 +107,7 @@ export async function update (req, res) {
             categoryId
         }
     })
-    res.sendStatus(204).json(updateVideogame)  
+    res.json(updateVideogame)  
 }
 export async function destroy (req, res) {
         const id = Number(req.params.id)
