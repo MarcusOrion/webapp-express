@@ -11,7 +11,7 @@ const isStringValid = (value) => typeof value === 'string' && value.trim() != ''
 
 export async function index (req, res) {
         const limit = req.query.limit
-    const videogames = await Prisma.videogame.findMany({
+    const videogames = await prisma.videogame.findMany({
     select: {
         id: true,
         title: true,
@@ -44,7 +44,32 @@ export async function show (req, res) {
     res.json(videogame)   
 }
 export async function store (req, res) {
-    
+   const { title, description, rating, categoryId} = req.body;
+   // Validazione campi obbligatori
+   if (isStringValid(title)) {
+    return sendError(res, 400, 'Title data is required')
+   }
+   // Validazione id categoria
+   const category = await prisma.category.findUnique({
+    where: { 
+        id: categoryId
+    }
+    })
+    if (!category) {
+        return sendError(req, 400, 'Category id not valid')
+    }
+   const newVideogame = await prisma.videogame.create({
+    data: {
+        title,
+        description,
+        rating,
+        categoryId,
+    },
+    select: {
+        id: true,
+    }
+   })
+   res.status(201).json(newVideogame)
 }
 export async function update (req, res) {
     

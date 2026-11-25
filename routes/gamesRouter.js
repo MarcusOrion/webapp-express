@@ -1,15 +1,14 @@
 import express from 'express';
 import prisma from '../libs/prismaClient.js'
-import { index, show } from '../controllers/videogamesController.js';
+import { index, show, store } from '../controllers/videogamesController.js';
 
 const router = express.Router()
 // INDEX - Lista dei giochi (READ)
-router.get("/", async (req,res) => {
-})
+router.get("/", index)
 // SHOW - Dettaglio di un videogioco specifico (READ)
-router.get("/:id", index)
+router.get("/:id", show)
 // STORE - Creazione di un nuovo elemento (CREATE) 
-router.post("/", show)
+router.post("/", store)
 // UPDATE - Modifica di un elemento già esistente (UPDATE)
 router.patch("/:id", async (req,res) => {
     const id = Number(req.params.id)
