@@ -1,60 +1,15 @@
 import express from 'express';
 import prisma from '../libs/prismaClient.js'
+import { index, show } from '../controllers/videogamesController.js';
 
 const router = express.Router()
 // INDEX - Lista dei giochi (READ)
 router.get("/", async (req,res) => {
 })
 // SHOW - Dettaglio di un videogioco specifico (READ)
-router.get("/:id", async (req,res) => {
-    const id = Number(req.params.id)
-    // Validazione formato numerico intero
-    if (!Number.isInteger(id)) {
-        return sendError(res, 400, 'Invalid id')
-    }
-    const videogame = await prisma.videogame.findUnique({
-        where: {
-            id: true,
-        },
-        category: {
-            select: {
-                id: true,
-                name: true,
-            }
-        }
-    })
-    if(!videogame) {
-        return sendError(res, 404, 'Videogame not found')
-    }
-    res.json(videogame)
-})
+router.get("/:id", index)
 // STORE - Creazione di un nuovo elemento (CREATE) 
-router.post("/", async (req,res) => {
-    const {title, description, rating, categoryId} = req.body;
-    // Validazione dei campi obbligatori
-    if (!isStringValid(title)) {
-        return sendError (res, 400, 'Title is required')
-    }
-// Validazione id categoria
-    const category = await prisma.category.findUnique({
-        id: categoryId
-    })
-    if (!category) {
-        return (res, 400, 'Category is not valid')
-    }
-    const newVideogame = await prisma.videogame.create({
-        data: {
-            title,
-            description,
-            rating,
-            categoryId,
-        },
-        select: {
-            id: true,
-        }
-    })
-    res.status(201).json(newVideogame)
-})
+router.post("/", show)
 // UPDATE - Modifica di un elemento già esistente (UPDATE)
 router.patch("/:id", async (req,res) => {
     const id = Number(req.params.id)

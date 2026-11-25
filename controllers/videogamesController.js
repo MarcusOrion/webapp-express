@@ -22,7 +22,26 @@ export async function index (req, res) {
     res.json(videogames);
 }
 export async function show (req, res) {
-    
+     const id = Number(req.params.id)
+    // Validazione formato numerico intero
+    if (!Number.isInteger(id)) {
+        return sendError(res, 400, 'Invalid id')
+    }
+    const videogame = await prisma.videogame.findUnique({
+        where: {
+            id: true,
+        },
+        category: {
+            select: {
+                id: true,
+                name: true,
+            }
+        }
+    })
+    if(!videogame) {
+        return sendError(res, 404, 'Videogame not found')
+    }
+    res.json(videogame)   
 }
 export async function store (req, res) {
     
