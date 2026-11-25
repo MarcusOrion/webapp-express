@@ -75,6 +75,21 @@ router.post("/", async (req,res) => {
 // UPDATE - Modifica di un elemento già esistente (UPDATE)
 router.patch("/:id", async (req,res) => {
     const id = Number(req.params.id)
+    // Validazione dei campi obbligatori
+    if (!Number.isInteger(id)) {
+        return sendError(res, 400, 'Invalid videogame id')
+    }
+    // Validazione di categoryId
+    if (categoryId !== undefined) {
+        const category = await prisma.category.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+        if (!category) {
+            return sendError(res, 400, 'Invalid category id')
+        }
+    }
     const {title, description, rating, categoryId} = req.body;
     const updateVideogame = await prisma.videogame.update({
         where: {
@@ -87,7 +102,7 @@ router.patch("/:id", async (req,res) => {
             categoryId
         }
     })
-    res.json(updateVideogame)
+    res.sendStatus(204).json(updateVideogame)
 })
 // DESTROY - Eliminazione di un elemento specifico (DELETE)
 router.delete("/:id", async (req,res) => {
@@ -101,7 +116,7 @@ router.delete("/:id", async (req,res) => {
         }
     })
     if (!videogame) {
-        return sendError (sendError, 404, 'Videogame not found')
+        return sendError (res, 404, 'Videogame not found')
     }
     await prisma.videogame.delete({
         where: {
