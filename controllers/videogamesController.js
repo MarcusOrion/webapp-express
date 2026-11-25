@@ -72,7 +72,35 @@ export async function store (req, res) {
    res.status(201).json(newVideogame)
 }
 export async function update (req, res) {
-    
+      const id = Number(req.params.id)
+    // Validazione dei campi obbligatori
+    if (!Number.isInteger(id)) {
+        return sendError(res, 400, 'Invalid videogame id')
+    }
+    // Validazione di categoryId
+    if (categoryId !== undefined) {
+        const category = await prisma.category.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+        if (!category) {
+            return sendError(res, 400, 'Invalid category id')
+        }
+    }
+    const {title, description, rating, categoryId} = req.body;
+    const updateVideogame = await prisma.videogame.update({
+        where: {
+            id: id,
+        },
+        data: {
+            title,
+            description,
+            rating,
+            categoryId
+        }
+    })
+    res.sendStatus(204).json(updateVideogame)  
 }
 export async function destroy (req, res) {
     
