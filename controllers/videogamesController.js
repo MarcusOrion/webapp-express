@@ -103,5 +103,22 @@ export async function update (req, res) {
     res.sendStatus(204).json(updateVideogame)  
 }
 export async function destroy (req, res) {
-    
+        const id = Number(req.params.id)
+    if (!Number.isInteger(id)) {
+        return sendError(res, 400, 'Invalid videogame id')
+    }
+    const videogame = await prisma.videogame.findUnique({
+        where: {
+            id
+        }
+    })
+    if (!videogame) {
+        return sendError (res, 404, 'Videogame not found')
+    }
+    await prisma.videogame.delete({
+        where: {
+            id: id
+        }
+    })
+    res.sendStatus(204)
 }
