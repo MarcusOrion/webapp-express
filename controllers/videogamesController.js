@@ -85,6 +85,15 @@ export async function update (req, res) {
     if (!Number.isInteger(id)) {
         return sendError(res, 400, 'Invalid videogame id')
     }
+    //
+    const videogame =  await prisma.videogame.findUnique({
+        where: {
+            id
+        },
+    })
+    if (videogame === null) {
+        return sendError(res, 404, 'Videogame not found')
+    }
     // Validazione di categoryId
     if (categoryId !== undefined) {
         const category = await prisma.category.findUnique({
